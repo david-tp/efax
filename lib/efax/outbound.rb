@@ -175,6 +175,8 @@ module EFax
     attr_reader :message
     attr_reader :classification
     attr_reader :outcome
+    attr_reader :attempt_date
+    attr_reader :attempt_tim
 
     def initialize(response) #:nodoc:
       if response.is_a? Net::HTTPOK
@@ -182,6 +184,8 @@ module EFax
         @message = doc.at(:message).innerText
         @classification = doc.at(:classification).innerText.delete('"')
         @outcome = doc.at(:outcome).innerText.delete('"')
+        @attempt_date = doc.at(:lastdate).innerText
+        @attempt_time = doc.at(:lasttime).innerText
         if !sent_yet?(classification, outcome) || busy_signal?(classification)
           @status_code = QueryStatus::PENDING
         elsif @classification == "Success" && @outcome == "Success"
